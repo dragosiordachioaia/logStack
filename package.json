@@ -7,7 +7,7 @@
   },
   "author": "Dragos Iordachioaia",
   "license": "ISC",
-  "main": "server.js",
+  "main": "app/server.js",
   "dependencies": {
     "body-parser": "~1.0.1",
     "express": "~4.0.0",
