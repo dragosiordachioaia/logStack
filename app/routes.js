@@ -21,4 +21,15 @@ router.route("/issues").post((request, response) => {
   );
 });
 
+router.route("/issues/:issue_title").get((request, response) => {
+  Issue.find({ title: request.params.issue_title }).then(
+    issue => {
+      response.json(issue);
+    },
+    error => {
+      response.send(error);
+    }
+  );
+});
+
 module.exports = router;

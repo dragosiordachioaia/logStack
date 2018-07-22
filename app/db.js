@@ -1,10 +1,10 @@
-var MONGODB_URI =
+let MONGODB_URI =
   "mongodb://dragos:screwsentry999@ds245661.mlab.com:45661/logstack-dev";
 
-var mongoose = require("mongoose");
+let mongoose = require("mongoose");
 
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
-var connection = mongoose.connection;
+let connection = mongoose.connection;
 
 connection.on("error", console.error.bind(console, "connection error:"));
 
