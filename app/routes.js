@@ -11,7 +11,26 @@ router.use(function(req, res, next) {
 });
 
 router.route("/issues").post((request, response) => {
-  new Issue(request.body).save().then(
+  console.log("request.body:");
+  console.log(request.body);
+  let issue = new Issue();
+  issue.message = request.body.message;
+  issue.colno = request.body.colno;
+  issue.lineno = request.body.lineno;
+  issue.filename = request.body.filename;
+  issue.timeStamp = request.body.timeStamp;
+  issue.type = request.body.type;
+  issue.stack = request.body.stack;
+
+  // message: String,
+  // colno: Number,
+  // filename: String,
+  // lineno: Number,
+  // timeStamp: Number,
+  // type: String,
+  // stack: String,
+
+  issue.save().then(
     () => {
       response.json({ message: "Issue created!" });
     },
