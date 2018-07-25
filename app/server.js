@@ -27,7 +27,7 @@ let port = process.env.PORT || 8080; // set our port
 
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
-app.use("/api", router);
+app.use("/api/v1/", router);
 
 // START THE SERVER
 // =============================================================================

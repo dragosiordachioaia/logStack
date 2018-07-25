@@ -9,6 +9,8 @@ let IssueSchema = new Schema({
   timeStamp: Number,
   type: String,
   stack: String,
+  navigator: Object,
+  ip: String,
 });
 
 module.exports = mongoose.model("Issue", IssueSchema);
