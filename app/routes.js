@@ -3,7 +3,7 @@ var Issue = require("./models/issue");
 var mongoose = require("./db");
 
 var router = express.Router();
-var getIP = require('ipware')().get_ip;
+var getIP = require("ipware")().get_ip;
 
 // middleware to use for all requests
 router.use(function(req, res, next) {
@@ -16,8 +16,13 @@ router.route("/issues").post((request, response) => {
   console.log(request.body);
 
   let issue = new Issue();
-  for(let prop in request.body) {
-    issue[prop] = request.body[prop];
+  for (let prop in request.body) {
+    if (prop !== "config") {
+      issue[prop] = request.body[prop];
+    }
+  }
+  for (let prop in request.body.config) {
+    issue[prop] = request.body.config[prop];
   }
   issue.ip = request.ip;
 
