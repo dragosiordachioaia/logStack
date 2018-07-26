@@ -11,6 +11,10 @@ router.use(function(req, res, next) {
   next(); // make sure we go to the next routes and don't stop here
 });
 
+router.get("/", function(req, res) {
+  res.send("Birds home page");
+});
+
 router.route("/issues").post((request, response) => {
   console.log("request.body:");
   console.log(request.body);

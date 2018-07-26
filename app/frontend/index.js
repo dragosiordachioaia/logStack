@@ -12,18 +12,7 @@ import App from "components/app";
 
 // import AppErrorWrapper from "app/frontend/components/error_wrapper";
 
-export function initStore(reducers, preloadedState, sentryConfig) {
-  return createStore(
-    reducers,
-    preloadedState,
-    applyMiddleware(
-      thunk,
-      createRavenMiddleware(Raven, {
-        stateTransformer: filterStateForSentryPayload,
-      })
-    )
-  );
-}
+showApp();
 
 function showApp() {
   const preloadedState = {};
@@ -32,10 +21,9 @@ function showApp() {
   let appContainer = (
     <Provider store={store}>
       <div>
-        <style>{displayMainStyle(contextComponentsData)}</style>
-        <AppErrorWrapper>
-          <App />
-        </AppErrorWrapper>
+        {/* <AppErrorWrapper> */}
+        <App />
+        {/* </AppErrorWrapper> */}
       </div>
     </Provider>
   );

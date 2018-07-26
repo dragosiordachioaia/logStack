@@ -32,7 +32,7 @@ function Config(env) {
     entry: "./app/frontend/index.js",
     output: {
       path: path.resolve("./app/static"),
-      filename: "logStack-dashboard.min.js",
+      filename: "dashboard.min.js",
     },
     resolve: {
       modules: [

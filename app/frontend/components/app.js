@@ -1,4 +1,4 @@
-import { Component } from "react";
+import React, { Component } from "react";
 
 import actions from "actions/combine_action_creators";
 import { bindActionCreators } from "redux";
