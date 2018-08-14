@@ -1,10 +1,23 @@
+let moment = require("moment");
+
 let Issue = require("../models/issue");
 let Group = require("../models/group");
 let Project = require("../models/project");
 
+let os = require("os-utils");
+
+let requests = 0;
 module.exports = router => {
   router.route("/issues").post((request, response) => {
-    console.log();
+    requests++;
+    if (requests % 10 === 0) {
+      os.cpuUsage(function(v) {
+        console.log("CPU Usage (%): " + v);
+      });
+      console.log("free memory: ", os.freemem());
+    }
+
+    let crtDate = moment().format("YYYY-MM-DD");
     let issue = new Issue();
     for (let prop in request.body) {
       if (prop !== "config") {
@@ -15,24 +28,23 @@ module.exports = router => {
       issue[prop] = request.body.config[prop];
     }
     issue.ip = request.ip;
+    issue.date = Date.now();
+    issue.dateISO = moment();
+    issue.dateISOShort = crtDate;
 
-    console.log("request message:", request.body.message);
     Group.findOne({ message: request.body.message }).then(
       existingGroup => {
-        console.log("existing group: ", existingGroup);
-
         if (existingGroup) {
-          console.log("group exists");
           issue.groupID = existingGroup.id;
           existingGroup.instances++;
           existingGroup.save();
           saveIssue(issue, response);
         } else {
-          console.log("group does NOT exist");
           let newGroup = new Group();
+          newGroup.projectID = issue.projectID;
           newGroup.message = issue.message;
           newGroup.type = issue.type;
-          newGroup.instances = 1;
+
           newGroup.save().then(
             groupRecord => {
               issue.groupID = groupRecord.id;

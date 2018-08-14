@@ -7,7 +7,6 @@ let getIP = require("ipware")().get_ip;
 
 // middleware to use for all requests
 router.use(function(req, res, next) {
-  console.log("Something is happening.");
   next(); // make sure we go to the next routes and don't stop here
 });
 

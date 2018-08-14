@@ -40,4 +40,4 @@ app.get("*", function(req, res) {
   res.sendfile(__dirname + req.url);
 });
 
-console.log("Magic happens on port " + port);
+console.log("logstack server is running on port " + port);

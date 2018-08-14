@@ -1,5 +1,9 @@
 import React, { Component } from "react";
 
+const styleList = {
+  paddingLeft: "0",
+};
+
 const styleElement = {
   listStyleType: "none",
   border: "1px solid #eee",
@@ -18,19 +22,22 @@ const styleInstances = {
 
 export default class IssueList extends Component {
   render() {
-    if (!this.props.issues || this.props.issues.length === 0) {
-      return <p>Loading...</p>;
+    if (!this.props.issues) {
+      return null;
+    }
+    if (this.props.issues.length === 0) {
+      return <p>There are no issues for this projectw</p>;
     }
 
     const issues = this.props.issues.map((issue, index) => {
       return (
         <li key={issue._id} style={styleElement}>
           <span style={styleMessage}>{issue.message} </span> -{" "}
-          <span style={styleInstances}> {issue.instances} instances </span>
+          <span style={styleInstances}> {issue.history.count} instances </span>
         </li>
       );
     });
 
-    return <ul>{issues}</ul>;
+    return <ul style={styleList}>{issues}</ul>;
   }
 }

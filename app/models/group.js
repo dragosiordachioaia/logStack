@@ -4,7 +4,8 @@ let Schema = mongoose.Schema;
 let GroupSchema = new Schema({
   message: String,
   type: String,
-  instances: Number,
+  projectID: String,
+  history: Object,
 });
 
 module.exports = mongoose.model("Group", GroupSchema);
