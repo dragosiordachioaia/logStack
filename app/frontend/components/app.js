@@ -1,34 +1,38 @@
 import React, { Component } from "react";
 
-import actions from "actions/combine_action_creators";
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
+import * as api from "utils/api";
 
-export class App extends Component {
+import IssueList from "components/issue_list";
+
+export default class App extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      issues: null,
+      errors: null,
+    };
+
+    // this.displayIssues = this.displayIssues.bind(this);
+  }
+
+  componentDidMount() {
+    api.fetchGroups().then(
+      response => {
+        this.setState({ issues: response.data }, () => {
+          console.log(this.state);
+        });
+      },
+      error => {
+        const newErrors = JSON.parse(JSON.stringify(this.state.errors));
+        newErrors.push(error);
+        this.setState({
+          errors: newErrors,
+        });
+      }
+    );
   }
 
   render() {
-    return <h1>This is our app</h1>;
+    return <IssueList issues={this.state.issues} />;
   }
 }
-
-function mapStateToProps(state) {
-  return {
-    issues: state.issues,
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      actions: {
-        fetchIssues: actions.fetchIssues,
-      },
-    },
-    dispatch
-  );
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);

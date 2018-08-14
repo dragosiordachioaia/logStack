@@ -12,6 +12,7 @@ let IssueSchema = new Schema({
   projectId: String,
   breadcrumbs: Array,
   tags: Array,
+  groupID: String,
 
   // error-specific
   colno: Number,

@@ -1,9 +1,9 @@
-var express = require("express");
-var Issue = require("./models/issue");
-var mongoose = require("./db");
+let express = require("express");
 
-var router = express.Router();
-var getIP = require("ipware")().get_ip;
+let mongoose = require("./db");
+
+let router = express.Router();
+let getIP = require("ipware")().get_ip;
 
 // middleware to use for all requests
 router.use(function(req, res, next) {
@@ -11,55 +11,8 @@ router.use(function(req, res, next) {
   next(); // make sure we go to the next routes and don't stop here
 });
 
-router.get("/", function(req, res) {
-  res.send("Birds home page");
-});
-
-router.route("/issues").post((request, response) => {
-  console.log("request.body:");
-  console.log(request.body);
-
-  let issue = new Issue();
-  for (let prop in request.body) {
-    if (prop !== "config") {
-      issue[prop] = request.body[prop];
-    }
-  }
-  for (let prop in request.body.config) {
-    issue[prop] = request.body.config[prop];
-  }
-  issue.ip = request.ip;
-
-  issue.save().then(
-    record => {
-      response.json({ id: record.id });
-    },
-    error => {
-      response.send(error);
-    }
-  );
-});
-
-router.route("/issues/:issue_id").get((request, response) => {
-  Issue.find({ _id: request.params.issue_id }).then(
-    issue => {
-      response.json(issue);
-    },
-    error => {
-      response.send(error);
-    }
-  );
-});
-
-router.route("/issues/").get((request, response) => {
-  Issue.find().then(
-    issue => {
-      response.json(issue);
-    },
-    error => {
-      response.send(error);
-    }
-  );
-});
+require("./routes/issue_routes")(router);
+require("./routes/project_routes")(router);
+require("./routes/group_routes")(router);
 
 module.exports = router;
