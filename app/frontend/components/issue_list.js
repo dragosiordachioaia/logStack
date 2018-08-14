@@ -1,4 +1,7 @@
 import React, { Component } from "react";
+import moment from "moment";
+
+import HistoryChart from "components/history_chart";
 
 const styleList = {
   paddingLeft: "0",
@@ -29,11 +32,21 @@ export default class IssueList extends Component {
       return <p>There are no issues for this projectw</p>;
     }
 
+    let last14Days = [];
+
+    for (let i = 13; i >= 0; i--) {
+      let crtDay = moment()
+        .subtract(i, "d")
+        .format("YYYY-MM-DD");
+      last14Days.push(crtDay);
+    }
+
     const issues = this.props.issues.map((issue, index) => {
       return (
         <li key={issue._id} style={styleElement}>
           <span style={styleMessage}>{issue.message} </span> -{" "}
           <span style={styleInstances}> {issue.history.count} instances </span>
+          <HistoryChart values={issue.history.days} keys={last14Days} />
         </li>
       );
     });
