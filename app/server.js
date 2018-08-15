@@ -8,6 +8,7 @@ let express = require("express"); // call express
 let app = express(); // define our app using express
 let bodyParser = require("body-parser");
 let router = require("./routes");
+let path = require("path");
 
 const redisClient = require("./redis");
 app.get("/store/:key", async (req, res) => {
@@ -46,11 +47,17 @@ app.use("/api/v1/", router);
 // =============================================================================
 app.listen(port);
 
-app.use(express.static(__dirname + "/static"));
+app.use("/static", express.static(__dirname + "/static"));
 
-app.get("*", function(req, res) {
-  console.log("req:", req.url);
-  res.sendfile(__dirname + req.url);
+app.get("/", (req, res) => {
+  res.sendfile(__dirname + "static/index.html");
 });
+
+// app.use(express.static(path.join(__dirname, "static")));
+
+// app.get("*", function(req, res) {
+//   console.log("req:", req.url);
+//   res.sendfile(__dirname + "/static/index.html");
+// });
 
 console.log("logstack server is running on port " + port);

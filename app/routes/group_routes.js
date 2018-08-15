@@ -34,7 +34,10 @@ module.exports = router => {
     .route("/projects/:project_id/groups")
     .get(async (request, response) => {
       const CACHE_KEY = `groups_${request.params.project_id}`;
-      const rawCachedData = await redisClient.getAsync(CACHE_KEY);
+      let rawCachedData;
+      try {
+        rawCachedData = await redisClient.getAsync(CACHE_KEY);
+      } catch (e) {}
       let cachedData;
       if (rawCachedData) {
         cachedData = JSON.parse(rawCachedData);
