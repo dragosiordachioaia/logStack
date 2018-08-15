@@ -1,3 +1,7 @@
+const redisClient = require("../redis");
+// const redis = require("redis");
+// const client = redis.createClient(process.env.REDIS_URL);
+
 let Issue = require("../models/issue");
 let Group = require("../models/group");
 let Project = require("../models/project");
@@ -26,26 +30,51 @@ module.exports = router => {
     );
   });
 
-  router.route("/projects/:project_id/groups").get((request, response) => {
-    mainStartTime = Date.now();
-    Issue.find({ projectID: request.params.project_id })
-      .lean()
-      .select("dateISOShort")
-      .exec((err, issues) => {
-        if (err) response.send(err);
-        Group.find({ projectID: request.params.project_id })
-          .lean()
-          .select("")
-          .exec((err, groups) => {
-            if (err) response.send(err);
-            mainEndTime = Date.now();
-            mainDuration = mainEndTime - mainStartTime;
-            console.log("DB duration: ", mainDuration);
-            let groupsWithHistory = attachHistoryToGroups(groups, issues);
-            response.json(groupsWithHistory);
-          });
-      });
-  });
+  router
+    .route("/projects/:project_id/groups")
+    .get(async (request, response) => {
+      const CACHE_KEY = `groups_${request.params.project_id}`;
+      const rawCachedData = await redisClient.getAsync(CACHE_KEY);
+      let cachedData;
+      if (rawCachedData) {
+        cachedData = JSON.parse(rawCachedData);
+      }
+      if (cachedData) {
+        console.warn("WE HAVE CACHED DATA");
+        response.json(cachedData);
+        return;
+      } else {
+        console.warn("WE DO NOT HAVE CACHED DATA");
+      }
+
+      mainStartTime = Date.now();
+      Issue.find({ projectID: request.params.project_id })
+        .lean()
+        .select("dateISOShort")
+        .exec((err, issues) => {
+          if (err) response.send(err);
+          Group.find({ projectID: request.params.project_id })
+            .lean()
+            .select("")
+            .exec(async (err, groups) => {
+              if (err) response.send(err);
+              mainEndTime = Date.now();
+              mainDuration = mainEndTime - mainStartTime;
+              console.log("DB duration: ", mainDuration);
+              let groupsWithHistory = attachHistoryToGroups(groups, issues);
+
+              // put the response in the cache for later use
+              await redisClient.setAsync(
+                CACHE_KEY,
+                JSON.stringify(groupsWithHistory),
+                "EX",
+                20
+              );
+
+              response.json(groupsWithHistory);
+            });
+        });
+    });
 };
 
 function attachHistoryToGroups(groups, issues) {

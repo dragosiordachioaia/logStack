@@ -9,6 +9,19 @@ let app = express(); // define our app using express
 let bodyParser = require("body-parser");
 let router = require("./routes");
 
+const redisClient = require("./redis");
+app.get("/store/:key", async (req, res) => {
+  const { key } = req.params;
+  const value = req.query;
+  await redisClient.setAsync(key, JSON.stringify(value));
+  return res.send("Success");
+});
+app.get("/:key", async (req, res) => {
+  const { key } = req.params;
+  const rawData = await redisClient.getAsync(key);
+  return res.json(JSON.parse(rawData));
+});
+
 // configure app to use bodyParser()
 // this will let us get the data from a POST
 app.use(bodyParser.urlencoded({ extended: true }));
