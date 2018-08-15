@@ -15,7 +15,7 @@ export default class App extends Component {
   render() {
     return (
       <Router>
-        <Route exact path="/project/:project_id" component={ProjectView} />
+        <Route exact path="/project/:projectID" component={ProjectView} />
       </Router>
     );
   }

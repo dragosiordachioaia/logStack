@@ -50,14 +50,14 @@ app.listen(port);
 app.use("/static", express.static(__dirname + "/static"));
 
 app.get("/", (req, res) => {
-  res.sendfile(__dirname + "static/index.html");
+  res.sendfile(__dirname + "/static/index.html");
 });
 
 // app.use(express.static(path.join(__dirname, "static")));
 
-// app.get("*", function(req, res) {
-//   console.log("req:", req.url);
-//   res.sendfile(__dirname + "/static/index.html");
-// });
+app.get("*", function(req, res) {
+  console.log("req:", req.url);
+  res.sendfile(__dirname + "/static/index.html");
+});
 
 console.log("logstack server is running on port " + port);

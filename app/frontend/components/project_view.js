@@ -3,6 +3,7 @@ import React, { Component, Fragment } from "react";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 
+import * as api from "utils/api";
 import IssueList from "components/issue_list";
 
 export default class ProjectView extends Component {
@@ -14,7 +15,7 @@ export default class ProjectView extends Component {
       projects: null,
       projectOptionsForDropdown: null,
       selectedProject: null,
-      errors: null,
+      errors: [],
     };
 
     this.displayProjectPicker = this.displayProjectPicker.bind(this);
@@ -31,13 +32,31 @@ export default class ProjectView extends Component {
             label: project.name,
           };
         });
-        this.setState({
+
+        let selectedProject = null;
+        dropdownOptions.forEach(option => {
+          if (option.value === this.props.match.params.projectID) {
+            selectedProject = option;
+            this.onChangeProject(selectedProject);
+            console.log("matched project");
+          }
+        });
+
+        console.log("selectedProject = ", selectedProject);
+
+        let newState = {
           projects: response.data,
           projectOptionsForDropdown: dropdownOptions,
-        });
+        };
+
+        if (selectedProject) {
+          newState.selectedProject = selectedProject;
+        }
+
+        this.setState(newState);
       },
       error => {
-        const newErrors = JSON.parse(JSON.stringify(this.state.errors));
+        let newErrors = JSON.parse(JSON.stringify(this.state.errors));
         newErrors.push(error);
         this.setState({
           errors: newErrors,

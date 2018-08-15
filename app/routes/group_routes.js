@@ -1,6 +1,6 @@
 const redisClient = require("../redis");
-// const redis = require("redis");
-// const client = redis.createClient(process.env.REDIS_URL);
+const redis = require("redis");
+const client = redis.createClient(process.env.REDIS_URL);
 
 let Issue = require("../models/issue");
 let Group = require("../models/group");
