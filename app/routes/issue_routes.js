@@ -1,6 +1,7 @@
 let moment = require("moment");
 
 let Issue = require("../models/issue");
+let SimpleIssue = require("../models/simple_issue");
 let Group = require("../models/group");
 let Project = require("../models/project");
 
@@ -10,12 +11,13 @@ let requests = 0;
 module.exports = router => {
   router.route("/issues").post((request, response) => {
     requests++;
-    if (requests % 10 === 0) {
-      os.cpuUsage(function(v) {
-        console.log("CPU Usage (%): " + v);
-      });
-      console.log("free memory: ", os.freemem());
-    }
+    // TODO: un-comment this to see CPU usage
+    // if (requests % 10 === 0) {
+    //   os.cpuUsage(function(v) {
+    //     console.log("CPU Usage (%): " + v);
+    //   });
+    //   console.log("free memory: ", os.freemem());
+    // }
 
     let crtDate = moment().format("YYYY-MM-DD");
     let issue = new Issue();
@@ -61,8 +63,30 @@ module.exports = router => {
   });
 
   function saveIssue(issue, response) {
+    let newSimpleIssue = new SimpleIssue();
+    // for(let propName in issue) {
+    //   if(propName !== "breadcrumbs" && propName !== "navigator" && issue.hasOwnProperty(propName)) {
+    //     console.log(propName);
+    //     newIssueSimple[propName] = issue[propName];
+    //   }
+    // }
+    newSimpleIssue.message = issue.message;
+    newSimpleIssue.type = issue.type;
+    newSimpleIssue.context = issue.context;
+    newSimpleIssue.user = issue.user;
+    newSimpleIssue.tags = issue.tags;
+    newSimpleIssue.groupID = issue.groupID;
+    newSimpleIssue.projectID = issue.projectID;
+    newSimpleIssue.date = issue.date;
+    newSimpleIssue.dateISO = issue.dateISO;
+    newSimpleIssue.dateISOShort = issue.dateISOShort;
+
+    newSimpleIssue.save();
+
     issue.save().then(
       issueRecord => {
+        // newIssueSimple._id = issueRecord.id;
+
         response.json({ id: issueRecord.id });
       },
       error => {

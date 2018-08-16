@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "server": "nodemon app/server.js",
+    "watch": "webpack --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Dragos Iordachioaia",

@@ -2,7 +2,7 @@ const redisClient = require("../redis");
 const redis = require("redis");
 const client = redis.createClient(process.env.REDIS_URL);
 
-let Issue = require("../models/issue");
+let SimpleIssue = require("../models/simple_issue");
 let Group = require("../models/group");
 let Project = require("../models/project");
 
@@ -14,14 +14,14 @@ let mainDuration;
 
 module.exports = router => {
   router.route("/groups/:group_id").get((request, response) => {
-    Issue.find({ groupID: request.params.group_id }).then(
-      issues => {
-        let history = getGroupHistory(issues);
+    SimpleIssue.find({ groupID: request.params.group_id }).then(
+      simpleIssues => {
+        let history = getGroupHistory(simpleIssues);
         result.history = history;
         response.json({
-          message: issues[0].message,
+          message: simpleIssues[0].message,
           history,
-          _id: issues[0].group_id,
+          _id: simpleIssues[0].group_id,
         });
       },
       error => {
@@ -51,10 +51,10 @@ module.exports = router => {
       }
 
       mainStartTime = Date.now();
-      Issue.find({ projectID: request.params.project_id })
+      SimpleIssue.find({ projectID: request.params.project_id })
         .lean()
         .select("dateISOShort")
-        .exec((err, issues) => {
+        .exec((err, simpleIssues) => {
           if (err) response.send(err);
           Group.find({ projectID: request.params.project_id })
             .lean()
@@ -64,7 +64,7 @@ module.exports = router => {
               mainEndTime = Date.now();
               mainDuration = mainEndTime - mainStartTime;
               console.log("DB duration: ", mainDuration);
-              let groupsWithHistory = attachHistoryToGroups(groups, issues);
+              let groupsWithHistory = attachHistoryToGroups(groups, simpleIssues);
 
               // put the response in the cache for later use
               await redisClient.setAsync(
@@ -80,12 +80,12 @@ module.exports = router => {
     });
 };
 
-function attachHistoryToGroups(groups, issues) {
+function attachHistoryToGroups(groups, simpleIssues) {
   let startTime = Date.now();
   let groupsWithHistory = [];
   groups.forEach(group => {
-    let issuesForGroup = issues.filter(issue => issue.groupID === group.id);
-    let groupHistory = getGroupHistory(issuesForGroup);
+    let simpleIssuesForGroup = simpleIssues.filter(simpleIssue => simpleIssue.groupID === group.id);
+    let groupHistory = getGroupHistory(simpleIssuesForGroup);
     group.history = groupHistory;
     groupsWithHistory.push(group);
   });
@@ -95,18 +95,18 @@ function attachHistoryToGroups(groups, issues) {
   return groupsWithHistory;
 }
 
-function getGroupHistory(issues) {
+function getGroupHistory(simpleIssues) {
   let history = {
-    count: issues.length,
+    count: simpleIssues.length,
     days: {},
   };
 
-  for (let i = 0; i < issues.length; i++) {
-    let issue = issues[i];
-    if (!history.days[issue.dateISOShort]) {
-      history.days[issue.dateISOShort] = 0;
+  for (let i = 0; i < simpleIssues.length; i++) {
+    let simpleIssue = simpleIssues[i];
+    if (!history.days[simpleIssue.dateISOShort]) {
+      history.days[simpleIssue.dateISOShort] = 0;
     }
-    history.days[issue.dateISOShort]++;
+    history.days[simpleIssue.dateISOShort]++;
   }
   return history;
 }
