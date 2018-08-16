@@ -29,7 +29,7 @@ export default class IssueList extends Component {
       return null;
     }
     if (this.props.issues.length === 0) {
-      return <p>There are no issues for this projectw</p>;
+      return <p>There are no issues for this project</p>;
     }
 
     let last14Days = [];

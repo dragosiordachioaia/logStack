@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from "react";
+import { withRouter } from 'react-router-dom';
 
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
@@ -6,7 +7,7 @@ import "react-dropdown/style.css";
 import * as api from "utils/api";
 import IssueList from "components/issue_list";
 
-export default class ProjectView extends Component {
+export class ProjectView extends Component {
   constructor(props) {
     super(props);
 
@@ -20,6 +21,7 @@ export default class ProjectView extends Component {
 
     this.displayProjectPicker = this.displayProjectPicker.bind(this);
     this.onChangeProject = this.onChangeProject.bind(this);
+    this.changeProject = this.changeProject.bind(this);
   }
 
   componentDidMount() {
@@ -37,7 +39,7 @@ export default class ProjectView extends Component {
         dropdownOptions.forEach(option => {
           if (option.value === this.props.match.params.projectID) {
             selectedProject = option;
-            this.onChangeProject(selectedProject);
+            this.changeProject(selectedProject);
             console.log("matched project");
           }
         });
@@ -66,6 +68,11 @@ export default class ProjectView extends Component {
   }
 
   onChangeProject(selectedProject) {
+    this.props.history.push(`/project/${selectedProject.value}`);
+    this.changeProject(selectedProject);
+  }
+
+  changeProject(selectedProject) {
     this.setState({ selectedProject });
     api.fetchGroups(selectedProject.value).then(
       response => {
@@ -107,3 +114,5 @@ export default class ProjectView extends Component {
     );
   }
 }
+
+export default withRouter(ProjectView);

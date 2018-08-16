@@ -53,12 +53,11 @@ module.exports = router => {
       mainStartTime = Date.now();
       SimpleIssue.find({ projectID: request.params.project_id })
         .lean()
-        .select("dateISOShort")
+        .select("groupID dateISOShort")
         .exec((err, simpleIssues) => {
           if (err) response.send(err);
           Group.find({ projectID: request.params.project_id })
             .lean()
-            .select("")
             .exec(async (err, groups) => {
               if (err) response.send(err);
               mainEndTime = Date.now();
@@ -84,7 +83,7 @@ function attachHistoryToGroups(groups, simpleIssues) {
   let startTime = Date.now();
   let groupsWithHistory = [];
   groups.forEach(group => {
-    let simpleIssuesForGroup = simpleIssues.filter(simpleIssue => simpleIssue.groupID === group.id);
+    let simpleIssuesForGroup = simpleIssues.filter(simpleIssue => simpleIssue.groupID == group._id);
     let groupHistory = getGroupHistory(simpleIssuesForGroup);
     group.history = groupHistory;
     groupsWithHistory.push(group);
