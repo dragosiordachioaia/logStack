@@ -1,16 +1,10 @@
 import React, { Component } from "react";
 
+import HistoryChartBar from 'components/history_chart_bar';
+
 const styleContainer = {
   display: "inline-block",
   marginLeft: "10px",
-};
-
-const styleBar = {
-  display: "inline-block",
-  width: "10px",
-  backgroundColor: "#ccc",
-  marginRight: "2px",
-  marginLeft: "0",
 };
 
 const MAX_BAR_HEIGHT = 20;
@@ -47,10 +41,9 @@ export default class HistoryChart extends Component {
       if (!occurences) {
         occurences = 0;
       }
-      let style = JSON.parse(JSON.stringify(styleBar));
-      style.height =
-        Math.max((occurences / maxOccurences) * MAX_BAR_HEIGHT, 1) + "px";
-      return <div style={style} key={key} />;
+
+      const height = Math.max((occurences / maxOccurences) * MAX_BAR_HEIGHT, 1);
+      return <HistoryChartBar key={key} height={height} occurences={occurences}/>;
     });
   }
 
