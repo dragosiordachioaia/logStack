@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { withRouter } from 'react-router-dom';
+import { withRouter } from "react-router-dom";
 import moment from "moment";
 
 import HistoryChart from "components/history_chart";
@@ -55,9 +55,17 @@ export class IssueList extends Component {
 
     const issues = this.props.issues.map((issue, index) => {
       return (
-        <li key={issue._id} style={styleElement} onClick={e => this.onIssueClick(issue)}>
+        <li
+          key={issue._id}
+          style={styleElement}
+          onClick={e => this.onIssueClick(issue)}
+        >
           <span style={styleMessage}>{issue.message} </span> -{" "}
-          <span style={styleInstances}> {issue.history.count} instances </span>
+          <span style={styleInstances}>
+            {" "}
+            {issue.history.count}{" "}
+            {issue.history.count === 1 ? "event" : "events"}{" "}
+          </span>
           <HistoryChart values={issue.history.days} keys={last14Days} />
         </li>
       );

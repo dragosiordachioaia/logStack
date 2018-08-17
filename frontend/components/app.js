@@ -3,6 +3,7 @@ import React, { Component, Fragment } from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 import * as api from "utils/api";
+import "less/main.less";
 
 import ProjectView from "components/project_view";
 import IssueView from "components/issue_view";

@@ -29,16 +29,13 @@ function Config(env) {
   }
 
   return {
-    entry: "./app/frontend/index.js",
+    entry: "./frontend/index.js",
     output: {
-      path: path.resolve("./app/static"),
+      path: path.resolve("./backend/static"),
       filename: "dashboard.min.js",
     },
     resolve: {
-      modules: [
-        path.resolve("./app/frontend/"),
-        path.resolve("./node_modules"),
-      ],
+      modules: [path.resolve("./frontend/"), path.resolve("./node_modules")],
     },
     module: {
       loaders: [

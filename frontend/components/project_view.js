@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from "react";
-import { withRouter } from 'react-router-dom';
+import { withRouter } from "react-router-dom";
 
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
@@ -21,11 +21,10 @@ export class ProjectView extends Component {
 
     this.displayProjectPicker = this.displayProjectPicker.bind(this);
     this.onChangeProject = this.onChangeProject.bind(this);
-    this.changeProject = this.changeProject.bind(this);
+    this.loadProjectData = this.loadProjectData.bind(this);
   }
 
   componentDidMount() {
-    console.log("props: ", this.props);
     api.fetchProjects().then(
       response => {
         let dropdownOptions = response.data.map(project => {
@@ -39,12 +38,9 @@ export class ProjectView extends Component {
         dropdownOptions.forEach(option => {
           if (option.value === this.props.match.params.projectID) {
             selectedProject = option;
-            this.changeProject(selectedProject);
-            console.log("matched project");
+            this.loadProjectData(selectedProject);
           }
         });
-
-        console.log("selectedProject = ", selectedProject);
 
         let newState = {
           projects: response.data,
@@ -69,16 +65,13 @@ export class ProjectView extends Component {
 
   onChangeProject(selectedProject) {
     this.props.history.push(`/projects/${selectedProject.value}`);
-    this.changeProject(selectedProject);
   }
 
-  changeProject(selectedProject) {
+  loadProjectData(selectedProject) {
     this.setState({ selectedProject });
     api.fetchGroups(selectedProject.value).then(
       response => {
-        this.setState({ issues: response.data }, () => {
-          console.log(this.state);
-        });
+        this.setState({ issues: response.data });
       },
       error => {
         const newErrors = JSON.parse(JSON.stringify(this.state.errors));

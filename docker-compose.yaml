@@ -2,7 +2,7 @@ version: '2'
 services:
   web:
     build: .
-    command: nodemon app/server.js -i app/frontend
+    command: npm run server
     volumes:
       - .:/app/
     ports:

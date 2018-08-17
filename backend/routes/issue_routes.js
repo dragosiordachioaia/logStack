@@ -63,13 +63,9 @@ module.exports = router => {
   });
 
   function saveIssue(issue, response) {
+    issue.device = getIssueBrowserAndDevice(issue.userAgent);
     let newSimpleIssue = new SimpleIssue();
-    // for(let propName in issue) {
-    //   if(propName !== "breadcrumbs" && propName !== "navigator" && issue.hasOwnProperty(propName)) {
-    //     console.log(propName);
-    //     newIssueSimple[propName] = issue[propName];
-    //   }
-    // }
+
     newSimpleIssue.message = issue.message;
     newSimpleIssue.type = issue.type;
     newSimpleIssue.context = issue.context;
@@ -80,6 +76,7 @@ module.exports = router => {
     newSimpleIssue.date = issue.date;
     newSimpleIssue.dateISO = issue.dateISO;
     newSimpleIssue.dateISOShort = issue.dateISOShort;
+    newSimpleIssue._id = issue._id;
 
     newSimpleIssue.save();
 
@@ -95,8 +92,7 @@ module.exports = router => {
   }
 
   router.route("/issues/:issue_id").get((request, response) => {
-
-  SimpleIssue.findById(request.params.issue_id).then(
+    Issue.findById(request.params.issue_id).then(
       issue => {
         response.json(issue);
       },
@@ -117,3 +113,46 @@ module.exports = router => {
     );
   });
 };
+
+function getIssueBrowserAndDevice(agent) {
+  let browser = getBrowser(agent);
+  let device = getDevice(agent);
+
+  return {
+    browserName: browser.name,
+    browserVersion: browser.version,
+    deviceName: device.name,
+    deviceVersion: device.version,
+  };
+}
+
+function getBrowser(agent) {
+  let data = {};
+  if (agent.includes("Chrome")) {
+    data.name = "Chrome";
+  } else if (agent.includes("Chromium")) {
+    data.name = "Chromium";
+  } else if (agent.includes("Safari")) {
+    data.name = "Safari";
+  }
+
+  if (agent.includes("Seamonkey")) {
+    data.name = "Seamonkey";
+  } else if (agent.includes("Firefox")) {
+    data.name = "Firefox";
+  }
+  if (agent.includes("Opera")) {
+    data.name = "Opera";
+  }
+  if (agent.includes("OPR")) {
+    data.name = "OPR";
+  }
+  if (agent.includes("MSIE")) {
+    data.name = "Internet Explorer";
+  }
+  return data;
+}
+
+function getDevice(agent) {
+  return {};
+}

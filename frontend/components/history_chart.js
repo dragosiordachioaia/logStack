@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import HistoryChartBar from 'components/history_chart_bar';
+import HistoryChartBar from "components/history_chart_bar";
 
 const styleContainer = {
   display: "inline-block",
@@ -17,8 +17,6 @@ export default class HistoryChart extends Component {
   }
 
   displayBars() {
-    console.log("this.props = ", this.props);
-
     if (
       !this.props.keys ||
       this.props.keys.length === 0 ||
@@ -43,7 +41,14 @@ export default class HistoryChart extends Component {
       }
 
       const height = Math.max((occurences / maxOccurences) * MAX_BAR_HEIGHT, 1);
-      return <HistoryChartBar key={key} height={height} occurences={occurences}/>;
+      return (
+        <HistoryChartBar
+          key={key}
+          label={key}
+          height={height}
+          occurences={occurences}
+        />
+      );
     });
   }
 

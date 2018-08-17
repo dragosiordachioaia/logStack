@@ -5,7 +5,7 @@ let IssueSchema = new Schema({
   // generic
   message: String,
   type: String,
-  navigator: Object,
+  userAgent: String,
   ip: String,
   context: Object,
   user: Object,
@@ -16,6 +16,7 @@ let IssueSchema = new Schema({
   date: String,
   dateISO: String,
   dateISOShort: String,
+  device: Object,
 
   // error-specific
   colno: Number,

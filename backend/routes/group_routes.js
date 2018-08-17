@@ -3,6 +3,7 @@ const redis = require("redis");
 const client = redis.createClient(process.env.REDIS_URL);
 
 let SimpleIssue = require("../models/simple_issue");
+let Issue = require("../models/issue");
 let Group = require("../models/group");
 let Project = require("../models/project");
 
@@ -14,41 +15,39 @@ let mainDuration;
 
 module.exports = router => {
   router.route("/groups/:group_id").get((request, response) => {
-    SimpleIssue.find({ groupID: request.params.group_id }).then(
-      simpleIssues => {
-        let history = getGroupHistory(simpleIssues);
-        result.history = history;
+    Issue.find({ groupID: request.params.group_id })
+      .lean()
+      .exec((err, issues) => {
+        let history = getGroupHistory(issues);
+        let users = getGroupUsers(issues);
         response.json({
-          message: simpleIssues[0].message,
+          _id: request.params.group_id,
+          message: issues[0].message,
           history,
-          _id: simpleIssues[0].group_id,
+          users,
         });
-      },
-      error => {
-        response.send(error);
-      }
-    );
+      });
   });
 
   router
     .route("/projects/:project_id/groups")
     .get(async (request, response) => {
       const CACHE_KEY = `groups_${request.params.project_id}`;
-      let rawCachedData;
-      try {
-        rawCachedData = await redisClient.getAsync(CACHE_KEY);
-      } catch (e) {}
-      let cachedData;
-      if (rawCachedData) {
-        cachedData = JSON.parse(rawCachedData);
-      }
-      if (cachedData) {
-        console.warn("WE HAVE CACHED DATA");
-        response.json(cachedData);
-        return;
-      } else {
-        console.warn("WE DO NOT HAVE CACHED DATA");
-      }
+      // let rawCachedData;
+      // try {
+      //   rawCachedData = await redisClient.getAsync(CACHE_KEY);
+      // } catch (e) {}
+      // let cachedData;
+      // if (rawCachedData) {
+      //   cachedData = JSON.parse(rawCachedData);
+      // }
+      // if (cachedData) {
+      //   console.warn("WE HAVE CACHED DATA");
+      //   response.json(cachedData);
+      //   return;
+      // } else {
+      //   console.warn("WE DO NOT HAVE CACHED DATA");
+      // }
 
       mainStartTime = Date.now();
       SimpleIssue.find({ projectID: request.params.project_id })
@@ -63,7 +62,10 @@ module.exports = router => {
               mainEndTime = Date.now();
               mainDuration = mainEndTime - mainStartTime;
               console.log("DB duration: ", mainDuration);
-              let groupsWithHistory = attachHistoryToGroups(groups, simpleIssues);
+              let groupsWithHistory = attachHistoryToGroups(
+                groups,
+                simpleIssues
+              );
 
               // put the response in the cache for later use
               await redisClient.setAsync(
@@ -83,7 +85,9 @@ function attachHistoryToGroups(groups, simpleIssues) {
   let startTime = Date.now();
   let groupsWithHistory = [];
   groups.forEach(group => {
-    let simpleIssuesForGroup = simpleIssues.filter(simpleIssue => simpleIssue.groupID == group._id);
+    let simpleIssuesForGroup = simpleIssues.filter(
+      simpleIssue => simpleIssue.groupID == group._id
+    );
     let groupHistory = getGroupHistory(simpleIssuesForGroup);
     group.lastIssue = simpleIssuesForGroup[simpleIssuesForGroup.length - 1];
     group.history = groupHistory;
@@ -109,4 +113,25 @@ function getGroupHistory(simpleIssues) {
     history.days[simpleIssue.dateISOShort]++;
   }
   return history;
+}
+
+function getGroupUsers(issues) {
+  let users = {
+    browser: {},
+    browserPercent: {},
+  };
+  let isssueCount = issues.length;
+  issues.forEach(issue => {
+    if (!users.browser[issue.device.browserName]) {
+      users.browser[issue.device.browserName] = 0;
+    }
+    users.browser[issue.device.browserName]++;
+  });
+  for (let browser in users.browser) {
+    let occurences = users.browser[browser];
+    users.browserPercent[browser] = Math.floor(
+      (occurences / isssueCount) * 100
+    );
+  }
+  return users;
 }
