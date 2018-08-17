@@ -5,6 +5,7 @@ import HistoryChartBar from "components/history_chart_bar";
 const styleContainer = {
   display: "inline-block",
   marginLeft: "10px",
+  float: "right",
 };
 
 const MAX_BAR_HEIGHT = 20;

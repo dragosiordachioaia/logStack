@@ -154,5 +154,22 @@ function getBrowser(agent) {
 }
 
 function getDevice(agent) {
-  return {};
+  let deviceName = null;
+  let agentLower = agent.toLowerCase();
+  console.log("getDevice() agent = ", agent);
+  if (agentLower.includes("macintosh")) {
+    deviceName = "Mac";
+  } else if (agentLower.includes("iphone")) {
+    deviceName = "iPhone";
+  } else if (agentLower.includes("ipad")) {
+    deviceName = "iPad";
+  } else if (agentLower.includes("windows")) {
+    deviceName = "PC";
+  } else if (agentLower.includes("pixel 2")) {
+    deviceName = "Pixel 2";
+  } else if (agentLower.includes("pixel")) {
+    deviceName = "Pixel";
+  }
+  console.log("deviceName:", deviceName);
+  return { name: deviceName };
 }

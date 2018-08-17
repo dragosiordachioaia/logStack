@@ -44,7 +44,9 @@ export default class IssueView extends Component {
     console.log(this.state);
 
     let browserData = this.state.groupData.users.browserPercent;
+    let deviceData = this.state.groupData.users.devicePercent;
     let browserListForChart = [];
+    let deviceListForChart = [];
 
     for (let browserName in browserData) {
       browserListForChart.push({
@@ -52,7 +54,12 @@ export default class IssueView extends Component {
         label: browserName,
       });
     }
-    console.log("browserListForChart: ", browserListForChart);
+    for (let deviceName in deviceData) {
+      deviceListForChart.push({
+        value: deviceData[deviceName],
+        label: deviceName,
+      });
+    }
 
     return (
       <Fragment>
@@ -68,6 +75,7 @@ export default class IssueView extends Component {
         </button>
         <div>Message: {this.state.issueData.message}</div>
         <StatsChart label="Browser" data={browserListForChart} />
+        <StatsChart label="Device" data={deviceListForChart} />
       </Fragment>
     );
   }

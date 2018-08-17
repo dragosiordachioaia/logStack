@@ -119,19 +119,29 @@ function getGroupUsers(issues) {
   let users = {
     browser: {},
     browserPercent: {},
+    device: {},
+    devicePercent: {},
   };
   let isssueCount = issues.length;
   issues.forEach(issue => {
     if (!users.browser[issue.device.browserName]) {
       users.browser[issue.device.browserName] = 0;
     }
+    if (!users.device[issue.device.deviceName]) {
+      users.device[issue.device.deviceName] = 0;
+    }
     users.browser[issue.device.browserName]++;
+    users.device[issue.device.deviceName]++;
   });
   for (let browser in users.browser) {
     let occurences = users.browser[browser];
     users.browserPercent[browser] = Math.floor(
       (occurences / isssueCount) * 100
     );
+  }
+  for (let device in users.device) {
+    let occurences = users.device[device];
+    users.devicePercent[device] = Math.floor((occurences / isssueCount) * 100);
   }
   return users;
 }

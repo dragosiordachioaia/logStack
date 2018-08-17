@@ -7,6 +7,8 @@ const colorsLight = ["#705C64", "#E45567", "#E4E7C2", "#8A9AAC", "#6E6F8C"];
 const styleContainer = {
   position: "relative",
   width: "100px",
+  marginBottom: "50px",
+  marginTop: "50px",
 };
 
 const styleChart = {
@@ -65,6 +67,9 @@ export default class StatsChart extends Component {
     });
 
     let data = this.props.data.map((item, index) => {
+      if (item.label === "null" || item.label === "undefined") {
+        item.label = "unknown";
+      }
       let label = `${item.label} ${item.value}%`;
       return {
         value: item.value,
