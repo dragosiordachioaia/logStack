@@ -25,6 +25,11 @@ const styleLabel = {
   transform: "translate(-50%, 0)",
 };
 
+const styleMaxElement = {
+  fontSize: "0.8rem",
+  width: "150px",
+};
+
 export default class StatsChart extends Component {
   constructor(props) {
     super(props);
@@ -52,6 +57,13 @@ export default class StatsChart extends Component {
   }
 
   render() {
+    let maxElement;
+    this.props.data.forEach(element => {
+      if (!maxElement || maxElement.value < element.value) {
+        maxElement = element;
+      }
+    });
+
     let data = this.props.data.map((item, index) => {
       let label = `${item.label} ${item.value}%`;
       return {
@@ -66,12 +78,15 @@ export default class StatsChart extends Component {
 
     return (
       <div style={styleContainer}>
+        <p style={styleMaxElement}>
+          {this.props.label}: {maxElement.label} {maxElement.value}%
+        </p>
         <PieChart
           data={data}
           style={styleChart}
           startAngle={45}
           animate={true}
-          rounded={true}
+          rounded={false}
           paddingAngle={5}
           lineWidth={40}
           onMouseOver={this.onMouseOver}

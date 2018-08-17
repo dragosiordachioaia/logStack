@@ -67,7 +67,7 @@ export default class IssueView extends Component {
           Back to project
         </button>
         <div>Message: {this.state.issueData.message}</div>
-        <StatsChart label="Browsers" data={browserListForChart} />
+        <StatsChart label="Browser" data={browserListForChart} />
       </Fragment>
     );
   }
