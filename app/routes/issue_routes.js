@@ -86,7 +86,6 @@ module.exports = router => {
     issue.save().then(
       issueRecord => {
         // newIssueSimple._id = issueRecord.id;
-
         response.json({ id: issueRecord.id });
       },
       error => {
@@ -96,7 +95,8 @@ module.exports = router => {
   }
 
   router.route("/issues/:issue_id").get((request, response) => {
-    Issue.find({ _id: request.params.id }).then(
+
+  SimpleIssue.findById(request.params.issue_id).then(
       issue => {
         response.json(issue);
       },

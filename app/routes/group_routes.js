@@ -85,6 +85,7 @@ function attachHistoryToGroups(groups, simpleIssues) {
   groups.forEach(group => {
     let simpleIssuesForGroup = simpleIssues.filter(simpleIssue => simpleIssue.groupID == group._id);
     let groupHistory = getGroupHistory(simpleIssuesForGroup);
+    group.lastIssue = simpleIssuesForGroup[simpleIssuesForGroup.length - 1];
     group.history = groupHistory;
     groupsWithHistory.push(group);
   });

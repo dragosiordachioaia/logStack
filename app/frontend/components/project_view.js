@@ -68,7 +68,7 @@ export class ProjectView extends Component {
   }
 
   onChangeProject(selectedProject) {
-    this.props.history.push(`/project/${selectedProject.value}`);
+    this.props.history.push(`/projects/${selectedProject.value}`);
     this.changeProject(selectedProject);
   }
 

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { withRouter } from 'react-router-dom';
 import moment from "moment";
 
 import HistoryChart from "components/history_chart";
@@ -8,6 +9,7 @@ const styleList = {
 };
 
 const styleElement = {
+  cursor: "pointer",
   listStyleType: "none",
   border: "1px solid #eee",
   padding: "5px 20px",
@@ -23,7 +25,17 @@ const styleInstances = {
   fontWeight: "bold",
 };
 
-export default class IssueList extends Component {
+export class IssueList extends Component {
+  constructor(props) {
+    super(props);
+
+    this.onIssueClick = this.onIssueClick.bind(this);
+  }
+
+  onIssueClick(issue) {
+    this.props.history.push(`/issues/${issue.lastIssue._id}`);
+  }
+
   render() {
     if (!this.props.issues) {
       return null;
@@ -43,7 +55,7 @@ export default class IssueList extends Component {
 
     const issues = this.props.issues.map((issue, index) => {
       return (
-        <li key={issue._id} style={styleElement}>
+        <li key={issue._id} style={styleElement} onClick={e => this.onIssueClick(issue)}>
           <span style={styleMessage}>{issue.message} </span> -{" "}
           <span style={styleInstances}> {issue.history.count} instances </span>
           <HistoryChart values={issue.history.days} keys={last14Days} />
@@ -54,3 +66,5 @@ export default class IssueList extends Component {
     return <ul style={styleList}>{issues}</ul>;
   }
 }
+
+export default withRouter(IssueList);
