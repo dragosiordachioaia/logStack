@@ -17,3 +17,19 @@ export function fetchGroupDetails(groupID) {
 export function fetchIssueDetails(issueID) {
   return axios.get(`${BASE_URL}/issues/${issueID}`);
 }
+
+export function fetchUserDetails(userID) {
+  return axios.get(`${BASE_URL}/users/${userID}`);
+}
+
+export function login({ username, password }) {
+  return axios.post(`${BASE_URL}/login`, { username, password });
+}
+
+export function register(userData) {
+  return axios.post(`${BASE_URL}/users`, { ...userData });
+}
+
+export function getUserStatus() {
+  return axios.get(`${BASE_URL}/user_status`);
+}

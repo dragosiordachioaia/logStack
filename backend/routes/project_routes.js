@@ -18,7 +18,7 @@ module.exports = router => {
   });
 
   router.route("/projects/:id").get((request, response) => {
-    Project.find({ _id: request.params.group_id }).then(
+    Project.findById(request.params.group_id).then(
       result => {
         response.json(result);
       },

@@ -13,5 +13,6 @@ router.use(function(req, res, next) {
 require("./routes/issue_routes")(router);
 require("./routes/project_routes")(router);
 require("./routes/group_routes")(router);
+require("./routes/user_routes")(router);
 
 module.exports = router;

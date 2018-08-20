@@ -11,10 +11,16 @@
   "license": "ISC",
   "main": "app/server.js",
   "dependencies": {
+    "bcrypt": "^3.0.0",
+    "bcryptjs": "^2.4.3",
     "body-parser": "~1.0.1",
+    "client-sessions": "^0.8.0",
+    "cookie-parser": "^1.4.3",
     "express": "~4.0.0",
+    "express-session": "^1.15.6",
     "ipware": "^1.0.0",
     "mongoose": "^5.2.4",
+    "morgan": "^1.9.0",
     "nodemon": "^1.18.3",
     "os-utils": "0.0.14",
     "redis": "^2.8.0"
