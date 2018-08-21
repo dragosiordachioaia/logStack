@@ -6,6 +6,7 @@ let UserSchema = new Schema({
   email: String,
   password: String,
   teams: Array,
+  projects: Array,
 });
 
 module.exports = mongoose.model("User", UserSchema);

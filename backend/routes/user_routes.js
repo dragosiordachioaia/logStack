@@ -57,8 +57,10 @@ module.exports = router => {
             request.session.user = {
               username: userData.username,
               email: userData.email,
+              _id: userData._id,
             };
             console.log("password matches");
+            console.log(request.session.user);
             response.end("OK");
           } else {
             response.status(401);
