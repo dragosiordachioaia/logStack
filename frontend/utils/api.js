@@ -26,6 +26,10 @@ export function login({ username, password }) {
   return axios.post(`${BASE_URL}/login`, { username, password });
 }
 
+export function logout() {
+  return axios.post(`${BASE_URL}/logout`);
+}
+
 export function register(userData) {
   return axios.post(`${BASE_URL}/users`, { ...userData });
 }

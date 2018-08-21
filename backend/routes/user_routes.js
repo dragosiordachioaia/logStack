@@ -73,6 +73,16 @@ module.exports = router => {
     }
   });
 
+  router.route("/logout").post((request, response) => {
+    if (request.session.user) {
+      delete request.session.user;
+      response.end("OK");
+    } else {
+      response.status(400);
+      response.end("You are already logged out");
+    }
+  });
+
   router.route("/user_status").get((request, response) => {
     if (request.session.user) {
       response.status(200);

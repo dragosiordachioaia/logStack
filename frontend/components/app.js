@@ -1,6 +1,11 @@
 import React, { Component, Fragment } from "react";
 
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Link,
+  // withRouter,
+} from "react-router-dom";
 
 import * as api from "utils/api";
 import "less/main.less";
@@ -19,41 +24,70 @@ export default class App extends Component {
     super(props);
     this.state = {
       user: null,
+      loadingState: "loading",
+      error: null,
     };
   }
 
   componentDidMount() {
     api.getUserStatus().then(
       response => {
-        this.setState({ user: response.data });
+        this.setState({ user: response.data, loadingState: "loaded" });
       },
       error => {
-        console.log("user is not logged in");
+        window.history.pushState("Login", "Login", "/login/a");
+        this.setState({ loadingState: "loaded" });
       }
     );
   }
 
+  displayLoading() {
+    return <p>Loading...</p>;
+  }
+
   render() {
+    if (this.state.loadingState === "loading") {
+      return this.displayLoading();
+    }
     return (
       // <UserContext.Provider value={this.state.user}>
       <Router>
         <Fragment>
-          <Header user={this.state.user} />
-          <Route path="/" component={ProjectView} />
-          <Route path="/projects/:projectID" component={ProjectView} />
+          <Header
+            user={this.state.user}
+            setUser={user => this.setState({ user })}
+          />
+          <Route path="/" render={() => <ProjectView {...this.state} />} />
+          <Route
+            path="/projects/:projectID"
+            render={() => <ProjectView {...this.state} />}
+          />
           <Route
             path="/login/a"
-            render={() => <LoginView user={this.state.user} />}
+            render={() => (
+              <LoginView
+                {...this.state}
+                setUser={user => this.setState({ user })}
+              />
+            )}
           />
           <Route
             path="/register/a"
-            render={() => <RegisterView user={this.state.user} />}
+            render={() => <RegisterView {...this.state} />}
           />
-          <Route path="/issues/:issueID" component={IssueView} />
-          <Route path="/account/a" component={AccountView} />
+          <Route
+            path="/issues/:issueID"
+            render={() => <IssueView {...this.state} />}
+          />
+          <Route
+            path="/account/a"
+            render={() => <AccountView {...this.state} />}
+          />
         </Fragment>
       </Router>
       // </UserContext.Provider>
     );
   }
 }
+
+// export default withRouter(App);

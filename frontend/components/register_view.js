@@ -14,12 +14,6 @@ export class RegisterView extends Component {
     this.onSubmit = this.onSubmit.bind(this);
   }
 
-  componentDidUpdate() {
-    if (this.props.user) {
-      this.props.history.push("/");
-    }
-  }
-
   onSubmit(e) {
     e.preventDefault();
     api

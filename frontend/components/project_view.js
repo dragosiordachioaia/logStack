@@ -22,9 +22,14 @@ export class ProjectView extends Component {
     this.displayProjectPicker = this.displayProjectPicker.bind(this);
     this.onChangeProject = this.onChangeProject.bind(this);
     this.loadProjectData = this.loadProjectData.bind(this);
+    this.fetchProjectList = this.fetchProjectList.bind(this);
   }
 
   componentDidMount() {
+    this.fetchProjectList();
+  }
+
+  fetchProjectList() {
     api.fetchProjects().then(
       response => {
         let dropdownOptions = response.data.map(project => {

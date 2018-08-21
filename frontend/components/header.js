@@ -1,14 +1,16 @@
 import React, { Component, Fragment } from "react";
-import { Link } from "react-router-dom";
+
+import { Link, withRouter } from "react-router-dom";
 
 import * as api from "utils/api";
 
-export default class UserStatus extends Component {
+export class Header extends Component {
   constructor(props) {
     super(props);
 
     this.displayNotLoggedIn = this.displayNotLoggedIn.bind(this);
     this.displayLoggedIn = this.displayLoggedIn.bind(this);
+    this.onLogout = this.onLogout.bind(this);
   }
 
   displayNotLoggedIn() {
@@ -25,7 +27,20 @@ export default class UserStatus extends Component {
   }
 
   displayLoggedIn() {
-    return <p>Hello {this.props.user.username}</p>;
+    return (
+      <p>
+        Hello {this.props.user.username}{" "}
+        <button onClick={this.onLogout}>Log out</button>
+      </p>
+    );
+  }
+
+  onLogout() {
+    console.log("onLogout");
+    api.logout().then(response => {
+      this.props.setUser();
+      this.props.history.push("/");
+    });
   }
 
   render() {
@@ -36,3 +51,5 @@ export default class UserStatus extends Component {
     }
   }
 }
+
+export default withRouter(Header);

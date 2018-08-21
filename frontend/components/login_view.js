@@ -13,7 +13,7 @@ export class LoginView extends Component {
     this.onSubmit = this.onSubmit.bind(this);
   }
 
-  componentDidUpdate() {
+  componentDidMount() {
     if (this.props.user) {
       this.props.history.push("/");
     }
@@ -21,9 +21,13 @@ export class LoginView extends Component {
 
   onSubmit(e) {
     e.preventDefault();
-    api
-      .login({ ...this.state })
-      .then(response => this.props.history.push("/"), error => alert(error));
+    api.login({ ...this.state }).then(
+      response => {
+        this.props.setUser({ ...this.state });
+        this.props.history.push("/");
+      },
+      error => alert(error)
+    );
   }
 
   render() {
@@ -38,6 +42,7 @@ export class LoginView extends Component {
         <input
           placeholder="Password"
           value={this.state.password}
+          type="password"
           onChange={e => this.setState({ password: e.target.value })}
         />
         <br />
