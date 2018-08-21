@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { withRouter } from "react-router-dom";
-
+import loginRequired from "components/login_required_hoc";
 import * as api from "utils/api";
 
 import StatsChart from "components/stats_chart";
@@ -81,4 +81,4 @@ export class IssueView extends Component {
   }
 }
 
-export default withRouter(IssueView);
+export default loginRequired(withRouter(IssueView));

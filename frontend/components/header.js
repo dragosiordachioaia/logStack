@@ -31,6 +31,9 @@ export class Header extends Component {
       <p>
         Hello {this.props.user.username}{" "}
         <button onClick={this.onLogout}>Log out</button>
+        <Link to="/account/a">
+          <button>My account</button>
+        </Link>
       </p>
     );
   }

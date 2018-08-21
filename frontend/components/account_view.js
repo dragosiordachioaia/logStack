@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
-
+import loginRequired from "components/login_required_hoc";
 import { fetchUserDetails, login } from "utils/api";
 
 export class AccountView extends Component {
@@ -24,4 +24,4 @@ export class AccountView extends Component {
   }
 }
 
-export default withRouter(AccountView);
+export default loginRequired(withRouter(AccountView));

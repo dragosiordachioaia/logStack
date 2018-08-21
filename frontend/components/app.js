@@ -36,7 +36,6 @@ export default class App extends Component {
         this.setState({ user: response.data, loadingState: "loaded" });
       },
       error => {
-        window.history.pushState("Login", "Login", "/login/a");
         this.setState({ loadingState: "loaded" });
       }
     );

@@ -10,11 +10,9 @@ export default class MainView extends Component {
 
   render() {
     if (this.props.user) {
-      return <ProjectView />;
+      return <ProjectView {...this.props} />;
     } else {
       return <GenericMainView />;
     }
-
-    return <div> MainView </div>;
   }
 }

@@ -27,6 +27,11 @@ export class ProjectView extends Component {
 
   componentDidMount() {
     this.fetchProjectList();
+    this._isMounted = true;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   fetchProjectList() {
@@ -56,14 +61,18 @@ export class ProjectView extends Component {
           newState.selectedProject = selectedProject;
         }
 
-        this.setState(newState);
+        if (this._isMounted) {
+          this.setState(newState);
+        }
       },
       error => {
         let newErrors = JSON.parse(JSON.stringify(this.state.errors));
         newErrors.push(error);
-        this.setState({
-          errors: newErrors,
-        });
+        if (this._isMounted) {
+          this.setState({
+            errors: newErrors,
+          });
+        }
       }
     );
   }
@@ -71,24 +80,32 @@ export class ProjectView extends Component {
   onChangeProject(selectedProject) {
     this.props.history.push(`/projects/${selectedProject.value}`);
     if (this.props.match.params.projectID) {
-      this.setState({ selectedProject }, () => {
-        this.loadProjectData(selectedProject);
-      });
+      if (this._isMounted) {
+        this.setState({ selectedProject }, () => {
+          this.loadProjectData(selectedProject);
+        });
+      }
     }
   }
 
   loadProjectData(selectedProject) {
-    this.setState({ selectedProject });
+    if (this._isMounted) {
+      this.setState({ selectedProject });
+    }
     api.fetchGroups(selectedProject.value).then(
       response => {
-        this.setState({ issues: response.data });
+        if (this._isMounted) {
+          this.setState({ issues: response.data });
+        }
       },
       error => {
         const newErrors = JSON.parse(JSON.stringify(this.state.errors));
         newErrors.push(error);
-        this.setState({
-          errors: newErrors,
-        });
+        if (this._isMounted) {
+          this.setState({
+            errors: newErrors,
+          });
+        }
       }
     );
   }
@@ -118,6 +135,4 @@ export class ProjectView extends Component {
   }
 }
 
-export default withRouter(ProjectView);
-// export default loginRequired(ProjectView);
-// export default loginRequired(withRouter(ProjectView));
+export default loginRequired(withRouter(ProjectView));

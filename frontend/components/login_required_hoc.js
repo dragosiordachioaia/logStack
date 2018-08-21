@@ -18,6 +18,7 @@ export default function loginRequired(WrappedComponent) {
       }
 
       checkUser() {
+        console.log("checkUser() this.props.user = ", this.props.user);
         if (!this.props.user) {
           this.props.history.push("/");
         }
