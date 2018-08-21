@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { withRouter } from "react-router-dom";
-
+import loginRequired from "components/login_required_hoc";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 
@@ -70,6 +70,11 @@ export class ProjectView extends Component {
 
   onChangeProject(selectedProject) {
     this.props.history.push(`/projects/${selectedProject.value}`);
+    if (this.props.match.params.projectID) {
+      this.setState({ selectedProject }, () => {
+        this.loadProjectData(selectedProject);
+      });
+    }
   }
 
   loadProjectData(selectedProject) {
@@ -114,3 +119,5 @@ export class ProjectView extends Component {
 }
 
 export default withRouter(ProjectView);
+// export default loginRequired(ProjectView);
+// export default loginRequired(withRouter(ProjectView));

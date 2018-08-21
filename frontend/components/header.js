@@ -38,7 +38,7 @@ export class Header extends Component {
   onLogout() {
     console.log("onLogout");
     api.logout().then(response => {
-      this.props.setUser();
+      this.props.setUser(null);
       this.props.history.push("/");
     });
   }

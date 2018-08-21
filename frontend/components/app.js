@@ -10,6 +10,7 @@ import {
 import * as api from "utils/api";
 import "less/main.less";
 
+import MainView from "components/main_view";
 import LoginView from "components/login_view";
 import RegisterView from "components/register_view";
 import ProjectView from "components/project_view";
@@ -41,6 +42,8 @@ export default class App extends Component {
     );
   }
 
+  componentDidUpdate() {}
+
   displayLoading() {
     return <p>Loading...</p>;
   }
@@ -57,7 +60,7 @@ export default class App extends Component {
             user={this.state.user}
             setUser={user => this.setState({ user })}
           />
-          <Route path="/" render={() => <ProjectView {...this.state} />} />
+          <Route path="/" render={() => <MainView {...this.state} />} />
           <Route
             path="/projects/:projectID"
             render={() => <ProjectView {...this.state} />}

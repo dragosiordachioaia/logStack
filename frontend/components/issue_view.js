@@ -9,7 +9,7 @@ const styleButton = {
   marginBottom: "20px",
 };
 
-export default class IssueView extends Component {
+export class IssueView extends Component {
   constructor(props) {
     super(props);
 
@@ -81,4 +81,4 @@ export default class IssueView extends Component {
   }
 }
 
-// export default withRouter(IssueView);
+export default withRouter(IssueView);
