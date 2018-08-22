@@ -18,8 +18,12 @@ export function fetchIssueDetails(issueID) {
   return axios.get(`${BASE_URL}/issues/${issueID}`);
 }
 
-export function fetchUserDetails() {
-  return axios.get(`${BASE_URL}/logged_in_user`);
+export function fetchLoggedInUser() {
+  return axios.get(`${BASE_URL}/users/me`);
+}
+
+export function fetchProjectTypes() {
+  return axios.get(`${BASE_URL}/project_types`);
 }
 
 export function login({ username, password }) {
@@ -34,6 +38,6 @@ export function register(userData) {
   return axios.post(`${BASE_URL}/users`, { ...userData });
 }
 
-export function getUserStatus() {
-  return axios.get(`${BASE_URL}/user_status`);
+export function createProject(projectData) {
+  return axios.post(`${BASE_URL}/projects`, { ...projectData });
 }

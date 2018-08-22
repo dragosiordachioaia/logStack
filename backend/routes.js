@@ -14,5 +14,6 @@ require("./routes/issue_routes")(router);
 require("./routes/project_routes")(router);
 require("./routes/group_routes")(router);
 require("./routes/user_routes")(router);
+require("./routes/project_type_routes")(router);
 
 module.exports = router;

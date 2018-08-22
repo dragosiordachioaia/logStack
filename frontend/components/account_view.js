@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 import loginRequired from "components/login_required_hoc";
-import { fetchUserDetails, login } from "utils/api";
+import { fetchLoggedInUser, login } from "utils/api";
 
 export class AccountView extends Component {
   constructor(props) {
@@ -15,20 +15,29 @@ export class AccountView extends Component {
 
   componentDidMount() {
     // login({ username: "me", password: "bla" });
-    fetchUserDetails().then(response => {
+    fetchLoggedInUser().then(response => {
       console.log("user data: ", response.data);
       this.setState({ user: response.data });
     });
   }
 
   displayProjectList() {
-    if (this.state.user.projects) {
+    if (this.state.user.projects.length === 0) {
       return <p>You don't have any projects yet</p>;
     } else {
-      let projectElements = this.state.user.projects.map(projectID => {
-        return <li key={projectID}>{projectID}</li>;
+      let projectElements = this.state.user.projects.map(projectData => {
+        return (
+          <li key={projectData._id}>
+            <Link to={`/projects/${projectData._id}`}>{projectData.name}</Link>
+          </li>
+        );
       });
-      return <ul>{projectElements}</ul>;
+      return (
+        <div>
+          <p>Your projects</p>
+          <ul>{projectElements}</ul>
+        </div>
+      );
     }
   }
 

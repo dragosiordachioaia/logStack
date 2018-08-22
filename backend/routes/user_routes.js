@@ -29,30 +29,17 @@ module.exports = router => {
     );
   });
 
-  router.route("/users/:id").get((request, response) => {
-    User.findById(request.params.id).then(
-      result => {
-        response.json(result);
-      },
-      error => {
-        response.send(error);
-      }
-    );
-  });
-
-  router.route("/logged_in_user").get((request, response) => {
+  router.route("/users/me").get((request, response) => {
     if (!request.session.user) {
       response.status(404);
       response.end("No user is logged in");
     }
-    User.findById(request.session.user._id).then(
-      result => {
-        response.json(result);
-      },
-      error => {
-        response.send(error);
-      }
-    );
+    getUserById(request, response, request.session.user._id);
+  });
+
+  router.route("/users/:id").get((request, response) => {
+    console.log("looking for a user");
+    getUserById(request, response, request.params.id);
   });
 
   router.route("/login").post((request, response) => {
@@ -100,16 +87,6 @@ module.exports = router => {
     }
   });
 
-  router.route("/user_status").get((request, response) => {
-    if (request.session.user) {
-      response.status(200);
-      response.json(request.session.user);
-    } else {
-      response.status(404);
-      response.end("User not logged in");
-    }
-  });
-
   router.route("/projects").get((request, response) => {
     Issue.all().then(
       result => {
@@ -121,3 +98,17 @@ module.exports = router => {
     );
   });
 };
+
+function getUserById(request, response, userID) {
+  User.findById(userID).exec((err, userData) => {
+    if (err) response.send(err);
+    console.log("found the user");
+    Project.find({ _id: { $in: userData.projects } }).then(
+      projects => {
+        userData.projects = projects;
+        response.json(userData);
+      },
+      error => response.send(error)
+    );
+  });
+}

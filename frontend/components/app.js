@@ -33,7 +33,7 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    api.getUserStatus().then(
+    api.fetchLoggedInUser().then(
       response => {
         this.setState({ user: response.data, loadingState: "loaded" });
       },

@@ -1,3 +1,5 @@
+let mongoose = require("mongoose");
+
 let Issue = require("../models/issue");
 let Group = require("../models/group");
 let User = require("../models/user");
@@ -10,11 +12,20 @@ module.exports = router => {
       response.end("Your are not authorised to see this resource");
     }
     let newProject = new Project();
-    newProject.name = request.body.name;
+    (newProject._id = new mongoose.Types.ObjectId()),
+      (newProject.name = request.body.name);
     newProject.language = request.body.language || "unknown";
     newProject.save().then(
-      record => {
-        response.json({ id: record.id });
+      newProjectRecord => {
+        response.json({ id: newProjectRecord.id });
+        console.log("user ID: ", request.session.user._id);
+        User.findById(request.session.user._id).then(
+          userData => {
+            userData.projects.push(newProjectRecord.id);
+            userData.save();
+          },
+          error => response.send(error)
+        );
       },
       error => {
         response.send(error);
@@ -26,6 +37,7 @@ module.exports = router => {
     if (!request.session.user) {
       response.status(401);
       response.end("Your are not authorised to see this resource");
+      return;
     }
     Project.findById(request.params.group_id).then(
       result => {
