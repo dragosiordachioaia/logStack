@@ -4,6 +4,7 @@ import {
   BrowserRouter as Router,
   Route,
   Link,
+  Switch,
   // withRouter,
 } from "react-router-dom";
 
@@ -17,6 +18,7 @@ import ProjectView from "components/project_view";
 import IssueView from "components/issue_view";
 import AccountView from "components/account_view";
 import Header from "components/header";
+import NewProjectView from "components/newproj";
 
 // const UserContext = React.createContext();
 
@@ -59,32 +61,39 @@ export default class App extends Component {
             user={this.state.user}
             setUser={user => this.setState({ user })}
           />
-          <Route path="/" render={() => <MainView {...this.state} />} />
-          <Route
-            path="/projects/:projectID"
-            render={() => <ProjectView {...this.state} />}
-          />
-          <Route
-            path="/login/a"
-            render={() => (
-              <LoginView
-                {...this.state}
-                setUser={user => this.setState({ user })}
-              />
-            )}
-          />
-          <Route
-            path="/register/a"
-            render={() => <RegisterView {...this.state} />}
-          />
-          <Route
-            path="/issues/:issueID"
-            render={() => <IssueView {...this.state} />}
-          />
-          <Route
-            path="/account/a"
-            render={() => <AccountView {...this.state} />}
-          />
+
+          <Switch>
+            <Route exact path="/" render={() => <MainView {...this.state} />} />
+            <Route
+              path="/projects/new"
+              render={() => <NewProjectView {...this.state} />}
+            />
+            <Route
+              path="/projects/:projectID"
+              render={() => <ProjectView {...this.state} />}
+            />
+            <Route
+              path="/login/a"
+              render={() => (
+                <LoginView
+                  {...this.state}
+                  setUser={user => this.setState({ user })}
+                />
+              )}
+            />
+            <Route
+              path="/register/a"
+              render={() => <RegisterView {...this.state} />}
+            />
+            <Route
+              path="/issues/:issueID"
+              render={() => <IssueView {...this.state} />}
+            />
+            <Route
+              path="/account/a"
+              render={() => <AccountView {...this.state} />}
+            />
+          </Switch>
         </Fragment>
       </Router>
       // </UserContext.Provider>

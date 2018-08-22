@@ -40,6 +40,21 @@ module.exports = router => {
     );
   });
 
+  router.route("/logged_in_user").get((request, response) => {
+    if (!request.session.user) {
+      response.status(404);
+      response.end("No user is logged in");
+    }
+    User.findById(request.session.user._id).then(
+      result => {
+        response.json(result);
+      },
+      error => {
+        response.send(error);
+      }
+    );
+  });
+
   router.route("/login").post((request, response) => {
     if (request.session.user) {
       response.status(400);

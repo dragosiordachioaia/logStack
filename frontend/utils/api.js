@@ -18,8 +18,8 @@ export function fetchIssueDetails(issueID) {
   return axios.get(`${BASE_URL}/issues/${issueID}`);
 }
 
-export function fetchUserDetails(userID) {
-  return axios.get(`${BASE_URL}/users/${userID}`);
+export function fetchUserDetails() {
+  return axios.get(`${BASE_URL}/logged_in_user`);
 }
 
 export function login({ username, password }) {

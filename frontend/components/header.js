@@ -11,6 +11,7 @@ export class Header extends Component {
     this.displayNotLoggedIn = this.displayNotLoggedIn.bind(this);
     this.displayLoggedIn = this.displayLoggedIn.bind(this);
     this.onLogout = this.onLogout.bind(this);
+    this.displayUserElement = this.displayUserElement.bind(this);
   }
 
   displayNotLoggedIn() {
@@ -46,12 +47,24 @@ export class Header extends Component {
     });
   }
 
-  render() {
+  displayUserElement() {
     if (!this.props.user || !this.props.user.username) {
       return this.displayNotLoggedIn();
     } else {
       return this.displayLoggedIn();
     }
+  }
+
+  render() {
+    let userElement = this.displayUserElement();
+    return (
+      <div>
+        <Link to="/">
+          <p>Home</p>
+        </Link>
+        {userElement}
+      </div>
+    );
   }
 }
 
