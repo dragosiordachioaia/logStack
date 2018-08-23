@@ -2,38 +2,41 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import moment from "moment";
 
-import HistoryChart from "components/history_chart";
+import IssueListItem from "components/issue_list_item";
 
 const styleList = {
   paddingLeft: "0",
-};
-
-const styleElement = {
-  cursor: "pointer",
-  listStyleType: "none",
-  border: "1px solid #eee",
-  padding: "5px 20px",
-  borderRadius: "50px",
-  display: "block",
-  backgroundColor: "#fafafa",
-  marginBottom: "10px",
-};
-
-const styleMessage = {};
-
-const styleInstances = {
-  fontWeight: "bold",
 };
 
 export class IssueList extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      checkedIssues: [],
+    };
     this.onIssueClick = this.onIssueClick.bind(this);
+    this.displayActions = this.displayActions.bind(this);
+    this.onIssueCheck = this.onIssueCheck.bind(this);
+  }
+
+  displayActions() {
+    return (
+      <div>
+        Actions:
+        <button onClick={this.onMerge}>Merge</button>
+        <button onClick={this.onDelete}>Delete</button>
+        <button onClick={this.onIgnore}>Ignore</button>
+      </div>
+    );
   }
 
   onIssueClick(issue) {
     this.props.history.push(`/issues/${issue.lastIssue._id}`);
+  }
+
+  onIssueCheck(issue) {
+    this.setState({ checkedIssues: [...this.state.checkedIssues, issue] });
   }
 
   render() {
@@ -55,23 +58,22 @@ export class IssueList extends Component {
 
     const issues = this.props.issues.map((issue, index) => {
       return (
-        <li
+        <IssueListItem
           key={issue._id}
-          style={styleElement}
-          onClick={e => this.onIssueClick(issue)}
-        >
-          <span style={styleMessage}>{issue.message} </span> -{" "}
-          <span style={styleInstances}>
-            {" "}
-            {issue.history.count}{" "}
-            {issue.history.count === 1 ? "event" : "events"}{" "}
-          </span>
-          <HistoryChart values={issue.history.days} keys={last14Days} />
-        </li>
+          issue={issue}
+          onClick={this.onIssueClick}
+          last14Days={last14Days}
+          onCheck={this.onIssueCheck}
+        />
       );
     });
 
-    return <ul style={styleList}>{issues}</ul>;
+    return (
+      <div>
+        {this.displayActions()}
+        <ul style={styleList}>{issues}</ul>
+      </div>
+    );
   }
 }
 
