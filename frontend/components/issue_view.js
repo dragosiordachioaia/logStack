@@ -19,19 +19,31 @@ export class IssueView extends Component {
       errors: [],
     };
 
+    this._isMounted = false;
+
     // this.displayStuff = this.displayStuff.bind(this);
   }
 
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   componentDidMount() {
+    this._isMounted = true;
     api
       .fetchIssueDetails(this.props.match.params.issueID)
       .then(issueResponse => {
-        this.setState({ issueData: issueResponse.data });
+        if (this._isMounted) {
+          this.setState({ issueData: issueResponse.data });
+        }
+
         api
           .fetchGroupDetails(issueResponse.data.groupID)
-          .then(groupResponse =>
-            this.setState({ groupData: groupResponse.data })
-          );
+          .then(groupResponse => {
+            if (this._isMounted) {
+              this.setState({ groupData: groupResponse.data });
+            }
+          });
       });
   }
 

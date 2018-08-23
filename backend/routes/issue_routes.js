@@ -9,7 +9,7 @@ let os = require("os-utils");
 
 let requests = 0;
 module.exports = router => {
-  router.route("/issues").post((request, response) => {
+  router.route("/projects/:projectID/issues").post((request, response) => {
     requests++;
     // TODO: un-comment this to see CPU usage
     // if (requests % 10 === 0) {
@@ -34,7 +34,10 @@ module.exports = router => {
     issue.dateISO = moment();
     issue.dateISOShort = crtDate;
 
-    Group.findOne({ message: request.body.message }).then(
+    Group.findOne({
+      projectID: request.params.projectID,
+      message: request.body.message,
+    }).then(
       existingGroup => {
         if (existingGroup) {
           issue.groupID = existingGroup.id;
