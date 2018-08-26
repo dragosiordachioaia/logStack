@@ -36,7 +36,7 @@ module.exports = router => {
 
     Group.findOne({
       projectID: request.params.projectID,
-      message: request.body.message,
+      messages: request.body.message,
     }).then(
       existingGroup => {
         if (existingGroup) {
@@ -47,7 +47,7 @@ module.exports = router => {
         } else {
           let newGroup = new Group();
           newGroup.projectID = issue.projectID;
-          newGroup.message = issue.message;
+          newGroup.messages = [issue.message];
           newGroup.type = issue.type;
 
           newGroup.save().then(

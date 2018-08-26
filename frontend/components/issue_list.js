@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import moment from "moment";
 
+import * as api from "utils/api";
+
 import IssueListItem from "components/issue_list_item";
 
 const styleList = {
@@ -18,6 +20,9 @@ export class IssueList extends Component {
     this.onIssueClick = this.onIssueClick.bind(this);
     this.displayActions = this.displayActions.bind(this);
     this.onIssueCheck = this.onIssueCheck.bind(this);
+    this.onMerge = this.onMerge.bind(this);
+    this.onDelete = this.onDelete.bind(this);
+    this.onIgnore = this.onIgnore.bind(this);
   }
 
   displayActions() {
@@ -29,6 +34,30 @@ export class IssueList extends Component {
         <button onClick={this.onIgnore}>Ignore</button>
       </div>
     );
+  }
+
+  onMerge() {
+    api
+      .mergeGroups(this.state.checkedIssues.map(issue => issue._id))
+      .then(() => {
+        this.props.fetchProjectList();
+      });
+  }
+
+  onDelete() {
+    api
+      .deleteGroups(this.state.checkedIssues.map(issue => issue._id))
+      .then(() => {
+        this.props.fetchProjectList();
+      });
+  }
+
+  onIgnore() {
+    api
+      .ignoreGroups(this.state.checkedIssues.map(issue => issue._id))
+      .then(() => {
+        this.props.fetchProjectList();
+      });
   }
 
   onIssueClick(issue) {

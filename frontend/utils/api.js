@@ -41,3 +41,18 @@ export function register(userData) {
 export function createProject(projectData) {
   return axios.post(`${BASE_URL}/projects`, { ...projectData });
 }
+
+export function mergeGroups(groupIDs) {
+  return axios.post(`${BASE_URL}/groups/merge`, groupIDs);
+}
+
+export function deleteGroups(groupIDs) {
+  console.log("deleteGroups() groupIDs = ", groupIDs);
+  return axios.delete(`${BASE_URL}/groups/`, { data: { groups: groupIDs } });
+}
+
+export function ignoreGroups(groupIDs) {
+  return axios.delete(`${BASE_URL}/groups/ignore`, {
+    data: { groups: groupIDs },
+  });
+}

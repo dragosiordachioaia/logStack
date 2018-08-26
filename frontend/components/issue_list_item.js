@@ -22,10 +22,15 @@ export default class IssueListItem extends Component {
   constructor(props) {
     super(props);
 
-    // this.displayStuff = this.displayStuff.bind(this);
+    this.displayIgnoredStatus = this.displayIgnoredStatus.bind(this);
   }
 
-  displayStuff() {}
+  displayIgnoredStatus() {
+    if (!this.props.issue.ignored) {
+      return <span>Not Ignored</span>;
+    }
+    return <span>Ignored</span>;
+  }
 
   render() {
     let issue = this.props.issue;
@@ -36,11 +41,12 @@ export default class IssueListItem extends Component {
           onChange={e => this.props.onCheck(issue)}
           onClick={e => e.stopPropagation()}
         />
-        <span style={styleMessage}>{issue.message} </span> -{" "}
+        <span style={styleMessage}>{issue.messages.join(", ")} </span> -{" "}
         <span style={styleInstances}>
           {" "}
           {issue.history.count} {issue.history.count === 1 ? "event" : "events"}{" "}
         </span>
+        {this.displayIgnoredStatus()}
         <HistoryChart
           values={issue.history.days}
           keys={this.props.last14Days}

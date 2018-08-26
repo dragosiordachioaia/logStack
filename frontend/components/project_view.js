@@ -129,7 +129,10 @@ export class ProjectView extends Component {
     return (
       <Fragment>
         {this.displayProjectPicker()}
-        <IssueList issues={this.state.issues} />
+        <IssueList
+          issues={this.state.issues}
+          fetchProjectList={this.fetchProjectList}
+        />
       </Fragment>
     );
   }

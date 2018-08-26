@@ -1,6 +1,7 @@
 const redisClient = require("../redis");
 const redis = require("redis");
 const client = redis.createClient(process.env.REDIS_URL);
+const _ = require("lodash");
 
 let SimpleIssue = require("../models/simple_issue");
 let Issue = require("../models/issue");
@@ -14,19 +15,120 @@ let mainEndTime;
 let mainDuration;
 
 module.exports = router => {
-  router.route("/groups/:group_id").get((request, response) => {
-    Issue.find({ groupID: request.params.group_id })
-      .lean()
-      .exec((err, issues) => {
-        let history = getGroupHistory(issues);
-        let users = getGroupUsers(issues);
-        response.json({
-          _id: request.params.group_id,
-          message: issues[0].message,
-          history,
-          users,
+  router.route("/groups/merge").post((request, response) => {
+    let groupsToMerge = request.body;
+    let groupToKeep = groupsToMerge[0];
+    let groupsToDelete = groupsToMerge.slice(1);
+
+    Group.find({ _id: { $in: groupsToDelete } }).then(
+      groupsToDeleteData => {
+        let groupsToDeleteMessages = groupsToDeleteData.map(
+          group => group.messages
+        );
+        Group.findById(groupToKeep).then(groupToKeepData => {
+          if (!groupToKeepData) {
+            response.status(500);
+            response.end("Could not find group to keep");
+            return;
+          }
+          let newMessages = groupsToDeleteMessages.concat(
+            groupToKeepData.messages
+          );
+          let newMessagesFlat = _.flattenDeep(newMessages);
+          groupToKeepData.messages = newMessages;
+          groupToKeepData.save();
+
+          Issue.updateMany(
+            { groupID: { $in: groupsToDelete } },
+            { groupID: groupToKeep }
+          ).then(
+            () => {
+              SimpleIssue.updateMany(
+                { groupID: { $in: groupsToDelete } },
+                { groupID: groupToKeep }
+              ).then(
+                () => {
+                  Group.deleteMany({ _id: { $in: groupsToDelete } }).then(
+                    () => {}
+                  );
+
+                  response.send("OK");
+                },
+                error => {
+                  response.status(500);
+                  response.end("Something did not work, check log");
+                }
+              );
+            },
+            error => {
+              response.status(500);
+              response.end("Something did not work, check log");
+            }
+          );
         });
-      });
+      },
+      error => {
+        response.status(500);
+        response.end("Something did not work, check log");
+      }
+    );
+  });
+  router.route("/groups").delete((request, response) => {
+    let IDs = request.body.groups;
+    console.log("request.body:", request.body);
+    console.log("IDs:", IDs);
+
+    Group.deleteMany({ _id: { $in: IDs } }).then(
+      () => {
+        Issue.deleteMany({ groupID: { $in: IDs } }).then(
+          () => {
+            response.send("OK");
+          },
+          error => {
+            response.status(500);
+            response.send(error);
+          }
+        );
+      },
+      error => {
+        response.status(500);
+        response.send(error);
+      }
+    );
+  });
+
+  router.route("/groups/ignore").delete((request, response) => {
+    let IDs = request.body.groups;
+    Group.updateMany({ _id: { $in: IDs } }, { ignored: true }).then(
+      () => {
+        response.send("OK");
+      },
+      error => {
+        response.status(500);
+        response.send(error);
+      }
+    );
+  });
+
+  router.route("/groups/:group_id").get((request, response) => {
+    Group.findById(request.params.group_id).then(
+      groupData => {
+        Issue.find({ groupID: groupData.id })
+          .lean()
+          .exec((err, issues) => {
+            let history = getGroupHistory(issues);
+            let users = getGroupUsers(issues);
+            response.json({
+              _id: request.params.group_id,
+              message: groupData.messages[0],
+              messages: groupData.messages,
+              history,
+              users,
+            });
+          });
+      },
+      error => response.send(error)
+    );
   });
 
   router
