@@ -51,8 +51,16 @@ export function deleteGroups(groupIDs) {
   return axios.delete(`${BASE_URL}/groups/`, { data: { groups: groupIDs } });
 }
 
+export function fetchPreviousIssue(issueID) {
+  return axios.get(`${BASE_URL}/issues/${issueID}/previous`);
+}
+
+export function fetchNextIssue(issueID) {
+  return axios.get(`${BASE_URL}/issues/${issueID}/next`);
+}
+
 export function ignoreGroups(groupIDs) {
   return axios.delete(`${BASE_URL}/groups/ignore`, {
-    data: { groups: groupIDs },
+    data: { groups: groupIDs }
   });
 }

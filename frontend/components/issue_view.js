@@ -1,12 +1,14 @@
 import React, { Component, Fragment } from "react";
 import { withRouter } from "react-router-dom";
+import moment from "moment";
+
 import loginRequired from "components/login_required_hoc";
 import * as api from "utils/api";
 
 import StatsChart from "components/stats_chart";
 
 const styleButton = {
-  marginBottom: "20px",
+  marginBottom: "20px"
 };
 
 export class IssueView extends Component {
@@ -16,12 +18,14 @@ export class IssueView extends Component {
     this.state = {
       issueData: null,
       groupData: null,
-      errors: [],
+      errors: []
     };
 
     this._isMounted = false;
 
-    // this.displayStuff = this.displayStuff.bind(this);
+    this.goNext = this.goNext.bind(this);
+    this.goPrevious = this.goPrevious.bind(this);
+    this.getIssueData = this.getIssueData.bind(this);
   }
 
   componentWillUnmount() {
@@ -30,24 +34,46 @@ export class IssueView extends Component {
 
   componentDidMount() {
     this._isMounted = true;
-    api
-      .fetchIssueDetails(this.props.match.params.issueID)
-      .then(issueResponse => {
-        if (this._isMounted) {
-          this.setState({ issueData: issueResponse.data });
-        }
-
-        api
-          .fetchGroupDetails(issueResponse.data.groupID)
-          .then(groupResponse => {
-            if (this._isMounted) {
-              this.setState({ groupData: groupResponse.data });
-            }
-          });
-      });
+    this.getIssueData(this.props.match.params.issueID);
   }
 
-  displayStuff() {}
+  getIssueData(issueID) {
+    api.fetchIssueDetails(issueID).then(issueResponse => {
+      if (this._isMounted) {
+        this.setState({ issueData: issueResponse.data });
+      }
+
+      api.fetchGroupDetails(issueResponse.data.groupID).then(groupResponse => {
+        if (this._isMounted) {
+          this.setState({ groupData: groupResponse.data });
+        }
+      });
+    });
+  }
+
+  goNext() {
+    api.fetchNextIssue(this.state.issueData._id).then(
+      response => {
+        this.props.history.push(`/issues/${response.data}`);
+        this.getIssueData(response.data);
+      },
+      error => {
+        alert("No more occurences");
+      }
+    );
+  }
+
+  goPrevious() {
+    api.fetchPreviousIssue(this.state.issueData._id).then(
+      response => {
+        this.props.history.push(`/issues/${response.data}`);
+        this.getIssueData(response.data);
+      },
+      error => {
+        alert("No more occurences");
+      }
+    );
+  }
 
   render() {
     if (!this.state.issueData || !this.state.groupData) {
@@ -63,15 +89,18 @@ export class IssueView extends Component {
     for (let browserName in browserData) {
       browserListForChart.push({
         value: browserData[browserName],
-        label: browserName,
+        label: browserName
       });
     }
     for (let deviceName in deviceData) {
       deviceListForChart.push({
         value: deviceData[deviceName],
-        label: deviceName,
+        label: deviceName
       });
     }
+
+    console.log(this.state.issueData.date);
+    let formattedDate = this.state.issueData.dateISO;
 
     return (
       <Fragment>
@@ -85,6 +114,10 @@ export class IssueView extends Component {
         >
           Back to project
         </button>
+        <button onClick={this.goNext}>Next occurence</button>
+        <button onClick={this.goPrevious}>Previous occurence</button>
+
+        <p>Date: {formattedDate}</p>
         <div>Message: {this.state.issueData.message}</div>
         <StatsChart label="Browser" data={browserListForChart} />
         <StatsChart label="Device" data={deviceListForChart} />

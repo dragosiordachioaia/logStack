@@ -36,7 +36,7 @@ module.exports = router => {
 
     Group.findOne({
       projectID: request.params.projectID,
-      messages: request.body.message,
+      messages: request.body.message
     }).then(
       existingGroup => {
         if (existingGroup) {
@@ -105,6 +105,46 @@ module.exports = router => {
     );
   });
 
+  router.route("/issues/:issue_id/next").get(async (request, response) => {
+    let issueID = request.params.issue_id;
+    let issueData = await Issue.findById(issueID).lean();
+    let groupID = issueData.groupID;
+
+    console.log("groupID:", groupID);
+    let results;
+
+    Issue.findOne({ _id: { $gt: issueID }, groupID: groupID })
+      .sort({ _id: 1 })
+      .exec((err, result) => {
+        if (err || !result) {
+          response.status(404);
+          response.end("Not found");
+          return;
+        }
+        response.send(result.id);
+      });
+  });
+
+  router.route("/issues/:issue_id/previous").get(async (request, response) => {
+    let issueID = request.params.issue_id;
+    let issueData = await Issue.findById(issueID).lean();
+    let groupID = issueData.groupID;
+
+    console.log("groupID:", groupID);
+    let results;
+
+    Issue.findOne({ _id: { $lt: issueID }, groupID: groupID })
+      .sort({ _id: -1 })
+      .exec((err, result) => {
+        if (err || !result) {
+          response.status(404);
+          response.end("Not found");
+          return;
+        }
+        response.send(result.id);
+      });
+  });
+
   router.route("/issues").get((request, response) => {
     Issue.find().then(
       result => {
@@ -125,7 +165,7 @@ function getIssueBrowserAndDevice(agent) {
     browserName: browser.name,
     browserVersion: browser.version,
     deviceName: device.name,
-    deviceVersion: device.version,
+    deviceVersion: device.version
   };
 }
 

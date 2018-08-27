@@ -32,6 +32,7 @@ export class IssueList extends Component {
         <button onClick={this.onMerge}>Merge</button>
         <button onClick={this.onDelete}>Delete</button>
         <button onClick={this.onIgnore}>Ignore</button>
+        <button onClick={this.props.fetchProjectList}>Refresh</button>
       </div>
     );
   }

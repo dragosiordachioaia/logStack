@@ -33,6 +33,7 @@ module.exports = router => {
     if (!request.session.user) {
       response.status(404);
       response.end("No user is logged in");
+      return;
     }
     getUserById(request, response, request.session.user._id);
   });
@@ -59,7 +60,7 @@ module.exports = router => {
             request.session.user = {
               username: userData.username,
               email: userData.email,
-              _id: userData._id,
+              _id: userData._id
             };
             console.log("password matches");
             console.log(request.session.user);
